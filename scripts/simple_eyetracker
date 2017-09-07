@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# we need to import glumpy upfront, or we have weird GLUT double-init problems...
+import glumpy
+
+import logging
+import os
+
+from simple_eyetracker.controller import EyeTrackerController
+from simple_eyetracker.gui import EyeTrackerGUI
+from simple_eyetracker.settings import settings
+
+fn = os.path.expanduser('~/.eyetracker/log.txt')
+logging.basicConfig(level=logging.DEBUG, filename=fn, filemode='w')
+
+if __name__ == '__main__':
+
+    et = EyeTrackerController(settings)
+    gui = EyeTrackerGUI(et)
+
+    print 'ready'
+    gui.mainloop()
