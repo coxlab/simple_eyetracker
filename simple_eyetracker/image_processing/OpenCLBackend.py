@@ -12,6 +12,7 @@ import pyopencl.array as cla
 from pyopencl import mem_flags as mf
 from pyopencl.elementwise import ElementwiseKernel
 
+import time
 
 from simple_cl_conv import NaiveSeparableCorrelation, Sobel
 from localmem_cl_conv import LocalMemorySeparableCorrelation
@@ -293,9 +294,11 @@ class OpenCLBackend (WovenBackend):
 def test_with_noise():
     im = np.random.randn(123, 164)
     print "testing inline"
-    #r = test_inline(im)
-    r = test_starburst(im)
-    print "Radial returned:", r.max(), r.min()
+    b = OpenCLBackend()
+    for i in range(0, 20):
+        # r = test_inline(im)
+        r = test_starburst(b, im)
+    # print "Radial returned:", r.max(), r.min()
     return r
 
 
@@ -304,27 +307,31 @@ def test_with_file(fn):
     if im.ndim > 2:
         im = np.mean(im[:, :, :3], 2)
     pylab.imsave("intermediate.png", im, vmin=0, vmax=1., cmap=pylab.cm.gray)
-    #r = test_inline(im)
+    r = test_inline(im)
     r = test_starburst(im)
     return r
 
 
-def test_inline(im, radii=[1, 3, 5, 9, 12, 15], alpha=10.):
-    b = OpenCLBackend()
+def test_inline(b, im, radii=[1, 3, 5, 9, 12, 15], alpha=10.):
     return b.fast_radial_transform(im, radii, alpha, readback=True)
 
 
-def test_starburst(im, n_rays=100, n_samples=40, ray_length=40, seed_pt=(50, 50)):
-    b = OpenCLBackend()
+def test_starburst(b, im, n_rays=100, n_samples=40, ray_length=40, seed_pt=(50, 50)):
     radii = [1, 3, 5, 9, 12, 15]
     alpha = 10.
+
+    tic = time.time()
     b.fast_radial_transform(im, radii, alpha, readback=True)
+    print('fr %f' % (time.time() - tic))
 
     (max_seed, min_seed) = b.find_minmax(b.clIm)
 
+    tic = time.time()
     for n in range(0, 3):
         result = b.find_starburst_ray_boundaries(im, max_seed, 3, 3.0, n_rays, n_samples, ray_length)
+    print('sb %f' % (time.time() - tic))
     print result
+
 
     # pylab.imshow(im)
     # pylab.plot(max_seed[1], max_seed[0], '*')
@@ -363,5 +370,5 @@ def profile():
     stats.print_stats(200)
 
 if __name__ == '__main__':
-    #profile()
-    main()
+    profile()
+    # main()

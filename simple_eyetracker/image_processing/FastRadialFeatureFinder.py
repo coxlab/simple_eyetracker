@@ -3,23 +3,24 @@
 
 import logging
 from numpy import *
+import numpy as np
 from EyeFeatureFinder import *
+import time
 
 from VanillaBackend import VanillaBackend
 from WovenBackend import WovenBackend
 from OpenCLBackend import OpenCLBackend
 
+from simple_eyetracker.util import do_profile
 
 class FastRadialFeatureFinder(EyeFeatureFinder):
 
-    def __init__(self, backend='woven'):
+    def __init__(self, backend=None):
 
-        if backend is 'woven':
+        if backend is None:
             self.backend = WovenBackend()
-        elif backend is 'opencl':
-            self.backend = OpenCLBackend()
         else:
-            self.backend = VanillaBackend()
+            self.backend = backend
 
         self.target_kpixels = 80.0  # 8.0
         self.max_target_kpixels = 50.0
@@ -39,7 +40,7 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
 
         self.do_refinement_phase = 0
 
-        self.return_sobel = 0
+        self.return_sobel = False
 
         self.albino_mode = False
         self.albino_threshold = 10.
@@ -71,6 +72,8 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
     # @clockit
     def analyze_image(self, image, guess=None, **kwargs):
         # print "fr"
+        alltic = time.time()
+
         im_array = image
         # im_array = image.astype(double)
         im_array = im_array[::self.ds_factor, ::self.ds_factor]
@@ -79,6 +82,8 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
             features = guess
         else:
             features = {'pupil_size': None, 'cr_size': None}
+
+
 
         if self.parameters_updated or self.backend.cached_shape \
             != im_array.shape:
@@ -94,7 +99,7 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
             im_array = image[::self.ds_factor, ::self.ds_factor]
 
             self.backend.autotune(im_array)
-            self.parameters_updated = 0
+            self.parameters_updated = False
 
             self.radiuses_to_try = linspace(ceil(self.min_radius_fraction
                     * im_array.shape[0]), ceil(self.max_radius_fraction
@@ -104,14 +109,18 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
             logging.debug('Downsampling factor: %s' % self.ds_factor)
 
         ds = self.ds_factor
+        print("front tic: %f" % (time.time() - alltic))
 
+        frtic = time.time()
         S = self.backend.fast_radial_transform(im_array, self.radiuses_to_try,
                 self.alpha)
+        print("self.backend.fast_radial_transform: %f" % (time.time() - frtic))
 
         # S[:, 0:self.restrict_left] = -1.
         # S[:, self.restrict_right:] = -1.
         # S[0:self.restrict_top, :] = -1.
         # S[self.restrict_bottom:, :] = -1.
+        backtic = time.time()
 
         if self.albino_mode:
             (pupil_coords, cr_coords) = self.find_albino_features(S, im_array)
@@ -144,12 +153,16 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
         features['restrict_left'] = self.restrict_left
         features['restrict_right'] = self.restrict_right
 
-        if self.return_sobel:
-            # this is very inefficient, and only for debugging
-            (m, x, y) = self.backend.sobel3x3(im_array)
-            features['sobel'] = m
+        # if False and True: #self.return_sobel:
+        #     # this is very inefficient, and only for debugging
+        #     # (m, x, y) = self.backend.sobel3x3(im_array)
+        #     # features['sobel'] = m
+        #     print "WTF!!!!!!"
 
         self.result = features
+        print("back tic: %f" % (time.time() - backtic))
+
+        print('all %f' % (time.time() - alltic))
 
     def update_parameters(self):
         self.parameters_updated = 1
@@ -283,5 +296,32 @@ def test_it():
 
     # pylab.show()
 
+# if __name__ == '__main__':
+#     test_it()
+
+def main():
+
+    im = np.random.randn(123, 164)
+    print "testing inline"
+    b = OpenCLBackend()
+    ff = FastRadialFeatureFinder(backend=b)
+    for i in range(0, 200):
+        # r = test_inline(im)
+        ff.analyze_image(im, {})
+        features = ff.get_result()
+        print(features['im_array'][0,0])
+
+
+def profile():
+
+    import hotshot, hotshot.stats
+    prof = hotshot.Profile("test.prof")
+    r = prof.runcall(main)
+    prof.close()
+    stats = hotshot.stats.load("test.prof")
+    stats.strip_dirs()
+    stats.sort_stats('time', 'calls')
+    stats.print_stats(200)
+
 if __name__ == '__main__':
-    test_it()
+    profile()

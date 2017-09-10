@@ -12,6 +12,8 @@ from SubpixelStarburstEyeFeatureFinder import *
 
 import logging
 
+from simple_eyetracker.util import do_profile
+
 
 class FrugalCompositeEyeFeatureFinder(EyeFeatureFinder):
 

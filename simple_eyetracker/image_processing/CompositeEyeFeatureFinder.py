@@ -13,7 +13,7 @@ from scipy import *
 from numpy import *
 from FastRadialFeatureFinder import *
 from SubpixelStarburstEyeFeatureFinder import *
-
+import time
 
 class CompositeEyeFeatureFinder(EyeFeatureFinder):
 
@@ -28,7 +28,7 @@ class CompositeEyeFeatureFinder(EyeFeatureFinder):
         self.ff_starburst = ff_starbust
 
     # ==================================== function: analyzeImage ========================================
-    # @clockit
+
     def analyze_image(self, im, guess={}, **kwargs):
 
         if guess is None:
@@ -36,8 +36,12 @@ class CompositeEyeFeatureFinder(EyeFeatureFinder):
 
         # #### FEATURE FINDER # 1: Get intial guess of pupil and CR using the fast radial finder
         # self.ff_fast_radial.target_kpixels = 10 #50
+        tic = time.time()
         self.ff_fast_radial.analyze_image(im, guess)  # NOTE: for now, the guess is not used by the fast radial feature finder
+        print('fast_radial: %f' % (time.time() - tic))
         features = self.ff_fast_radial.get_result()
+        
+        
         ds = features['dwnsmp_factor_coord']
         pupil_position_stage1 = features['pupil_position']
         cr_position_stage1 = features['cr_position']
@@ -57,8 +61,10 @@ class CompositeEyeFeatureFinder(EyeFeatureFinder):
             #   features['cr_radius'] = self.last['cr_radius']
 
             # Run the starburst ff
+            tic = time.time()
             self.ff_starburst.analyze_image(im, features.copy())
             features = self.ff_starburst.get_result()
+            print('starburst: %f' % (time.time() - tic))
         except Exception, e:
             features['pupil_radius'] = None
             features['cr_radius'] = None

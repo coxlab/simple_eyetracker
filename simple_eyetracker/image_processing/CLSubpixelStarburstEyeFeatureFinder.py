@@ -22,10 +22,13 @@ import matplotlib.pylab as plt
 
 class CLSubpixelStarburstEyeFeatureFinder(EyeFeatureFinder):
 
-    def __init__(self, **kwargs):
+    def __init__(self, backend=None, **kwargs):
         self.parameters_updated = False
 
-        self.backend = OpenCLBackend()
+        if backend is None:
+            self.backend = OpenCLBackend()
+        else:
+            self.backend = backend
 
         # following values in pixels
         self.cr_ray_length = kwargs.get('cr_ray_length', 10)

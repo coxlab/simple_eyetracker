@@ -3,6 +3,7 @@ import logging
 import time
 from Queue import Queue
 import numpy as np
+from simple_eyetracker.util import do_profile
 from simple_eyetracker.camera import BaslerCamera, POVRaySimulatedCamera, FakeCamera
 from simple_eyetracker.image_processing import (SubpixelStarburstEyeFeatureFinder, 
                                                 FastRadialFeatureFinder,
@@ -10,7 +11,8 @@ from simple_eyetracker.image_processing import (SubpixelStarburstEyeFeatureFinde
                                                 FrugalCompositeEyeFeatureFinder,
                                                 CLSubpixelStarburstEyeFeatureFinder,
                                                 PipelinedFeatureFinder,
-                                                DummyEyeFeatureFinder)
+                                                DummyEyeFeatureFinder,
+                                                OpenCLBackend)
 
 class EyeTrackerController(object):
 
@@ -114,18 +116,18 @@ class EyeTrackerController(object):
         else:
 
             # run everything in one process
+            b = OpenCLBackend()
+            sb_ff = CLSubpixelStarburstEyeFeatureFinder(backend=b)
+            fr_ff = FastRadialFeatureFinder(backend=b)
 
-            sb_ff = CLSubpixelStarburstEyeFeatureFinder()
-            fr_ff = FastRadialFeatureFinder(backend='opencl')
-
-            comp_ff = FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
-            # comp_ff = CompositeEyeFeatureFinder(fr_ff, sb_ff)
+            # comp_ff = FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
+            comp_ff = CompositeEyeFeatureFinder(fr_ff, sb_ff)
 
             self.radial_ff = fr_ff
             self.starburst_ff = sb_ff
 
-            # self.feature_finder = comp_ff
-            self.feature_finder = DummyEyeFeatureFinder()
+            self.feature_finder = comp_ff
+            # self.feature_finder = DummyEyeFeatureFinder()
 
 
         # -------------------------------------------------------------------
