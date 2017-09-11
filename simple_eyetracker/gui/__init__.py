@@ -257,226 +257,227 @@ class EyeTrackerGUI:
         # ---------------------------------------------------------------------
         #   RADIAL FEATURE FINDER
         # ---------------------------------------------------------------------
-        radial_ff = c.radial_ff
+        if False:
+            radial_ff = c.radial_ff
 
-        self.radial_ff_bar = atb.Bar(
-            name='RadialFF',
-            label='Radial Symmetry',
-            help='Parameters for initial (symmetry-based) image processing',
-            iconified='true',
-            position=(30, 30),
-            size=(250, 180),
-            )
+            self.radial_ff_bar = atb.Bar(
+                name='RadialFF',
+                label='Radial Symmetry',
+                help='Parameters for initial (symmetry-based) image processing',
+                iconified='true',
+                position=(30, 30),
+                size=(250, 180),
+                )
 
-        self.radial_ff_bar.add_var(
-            'target_kpixels',
-            label='Target kPixels',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=50.,
-            max=1000.,
-            step=10.,
-            target=radial_ff,
-            attr='target_kpixels',
-            )
-        self.radial_ff_bar.add_var(
-            'min_radius_fraction',
-            label='Min. radius (fraction)',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=0.01,
-            max=0.5,
-            step=0.01,
-            target=radial_ff,
-            attr='min_radius_fraction',
-            )
-        self.radial_ff_bar.add_var(
-            'max_radius_fraction',
-            label='Max. radius (fraction)',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=0.1,
-            max=0.8,
-            step=0.01,
-            target=radial_ff,
-            attr='max_radius_fraction',
-            )
-        self.radial_ff_bar.add_var(
-            'radius_steps',
-            label='Radius steps',
-            vtype=atb.TW_TYPE_UINT32,
-            min=1,
-            max=10,
-            step=1,
-            target=radial_ff,
-            attr='radius_steps',
-            )
-        self.radial_ff_bar.add_var(
-            'alpha',
-            label='Alpha',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=1.,
-            max=50.,
-            step=1.,
-            target=radial_ff,
-            attr='alpha',
-            )
+            self.radial_ff_bar.add_var(
+                'target_kpixels',
+                label='Target kPixels',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=50.,
+                max=1000.,
+                step=10.,
+                target=radial_ff,
+                attr='target_kpixels',
+                )
+            self.radial_ff_bar.add_var(
+                'min_radius_fraction',
+                label='Min. radius (fraction)',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=0.01,
+                max=0.5,
+                step=0.01,
+                target=radial_ff,
+                attr='min_radius_fraction',
+                )
+            self.radial_ff_bar.add_var(
+                'max_radius_fraction',
+                label='Max. radius (fraction)',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=0.1,
+                max=0.8,
+                step=0.01,
+                target=radial_ff,
+                attr='max_radius_fraction',
+                )
+            self.radial_ff_bar.add_var(
+                'radius_steps',
+                label='Radius steps',
+                vtype=atb.TW_TYPE_UINT32,
+                min=1,
+                max=10,
+                step=1,
+                target=radial_ff,
+                attr='radius_steps',
+                )
+            self.radial_ff_bar.add_var(
+                'alpha',
+                label='Alpha',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=1.,
+                max=50.,
+                step=1.,
+                target=radial_ff,
+                attr='alpha',
+                )
 
-        self.radial_ff_bar.add_var('show_transform', label='Show Transform',
-                                   vtype=atb.TW_TYPE_BOOL8, target=self,
-                                   attr='show_feature_map')
+            self.radial_ff_bar.add_var('show_transform', label='Show Transform',
+                                       vtype=atb.TW_TYPE_BOOL8, target=self,
+                                       attr='show_feature_map')
 
-        self.radial_ff_bar.add_var('Albino/albino_mode_enable',
-                                   label='Mode Enabled',
-                                   vtype=atb.TW_TYPE_BOOL8, target=radial_ff,
-                                   attr='albino_mode')
-        self.radial_ff_bar.add_var(
-            'Albino/albino_threshold',
-            label='Threshold',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=0.1,
-            max=50.,
-            step=1.,
-            target=radial_ff,
-            attr='albino_threshold',
-            )
+            self.radial_ff_bar.add_var('Albino/albino_mode_enable',
+                                       label='Mode Enabled',
+                                       vtype=atb.TW_TYPE_BOOL8, target=radial_ff,
+                                       attr='albino_mode')
+            self.radial_ff_bar.add_var(
+                'Albino/albino_threshold',
+                label='Threshold',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=0.1,
+                max=50.,
+                step=1.,
+                target=radial_ff,
+                attr='albino_threshold',
+                )
 
-        self.radial_ff_bar.add_var(
-            'RestrictRegion/top',
-            label='top',
-            vtype=atb.TW_TYPE_UINT32,
-            min=0,
-            max=300,
-            step=1,
-            target=radial_ff,
-            attr='restrict_top',
-            )
-        self.radial_ff_bar.add_var(
-            'RestrictRegion/left',
-            label='left',
-            vtype=atb.TW_TYPE_UINT32,
-            min=0,
-            max=300,
-            step=1,
-            target=radial_ff,
-            attr='restrict_left',
-            )
+            self.radial_ff_bar.add_var(
+                'RestrictRegion/top',
+                label='top',
+                vtype=atb.TW_TYPE_UINT32,
+                min=0,
+                max=300,
+                step=1,
+                target=radial_ff,
+                attr='restrict_top',
+                )
+            self.radial_ff_bar.add_var(
+                'RestrictRegion/left',
+                label='left',
+                vtype=atb.TW_TYPE_UINT32,
+                min=0,
+                max=300,
+                step=1,
+                target=radial_ff,
+                attr='restrict_left',
+                )
 
-        self.radial_ff_bar.add_var(
-            'RestrictRegion/right',
-            label='right',
-            vtype=atb.TW_TYPE_UINT32,
-            min=0,
-            max=300,
-            step=1,
-            target=radial_ff,
-            attr='restrict_right',
-            )
+            self.radial_ff_bar.add_var(
+                'RestrictRegion/right',
+                label='right',
+                vtype=atb.TW_TYPE_UINT32,
+                min=0,
+                max=300,
+                step=1,
+                target=radial_ff,
+                attr='restrict_right',
+                )
 
-        self.radial_ff_bar.add_var(
-            'RestrictRegion/bottom',
-            label='bottom',
-            vtype=atb.TW_TYPE_UINT32,
-            min=0,
-            max=300,
-            step=1,
-            target=radial_ff,
-            attr='restrict_bottom',
-            )
+            self.radial_ff_bar.add_var(
+                'RestrictRegion/bottom',
+                label='bottom',
+                vtype=atb.TW_TYPE_UINT32,
+                min=0,
+                max=300,
+                step=1,
+                target=radial_ff,
+                attr='restrict_bottom',
+                )
 
-        # ---------------------------------------------------------------------
-        #   STARBURST FEATURE FINDER
-        # ---------------------------------------------------------------------
+            # ---------------------------------------------------------------------
+            #   STARBURST FEATURE FINDER
+            # ---------------------------------------------------------------------
 
-        self.sb_ff_bar = atb.Bar(
-            name='StarburstFF',
-            label='Starburst',
-            iconified='true',
-            help="Parameters for the refinement phase ('starburst') image processing",
-            position=(40, 40),
-            size=(200, 250),
-            )
+            self.sb_ff_bar = atb.Bar(
+                name='StarburstFF',
+                label='Starburst',
+                iconified='true',
+                help="Parameters for the refinement phase ('starburst') image processing",
+                position=(40, 40),
+                size=(200, 250),
+                )
 
-        sb_ff = c.starburst_ff
+            sb_ff = c.starburst_ff
 
-        self.sb_ff_bar.add_var(
-            'Pupil/n_pupil_rays',
-            label='n rays',
-            vtype=atb.TW_TYPE_UINT32,
-            min=1,
-            max=100,
-            step=1,
-            target=sb_ff,
-            attr='pupil_n_rays',
-            )
+            self.sb_ff_bar.add_var(
+                'Pupil/n_pupil_rays',
+                label='n rays',
+                vtype=atb.TW_TYPE_UINT32,
+                min=1,
+                max=100,
+                step=1,
+                target=sb_ff,
+                attr='pupil_n_rays',
+                )
 
-        self.sb_ff_bar.add_var(
-            'Pupil/pupil_min_radius',
-            label='min radius',
-            vtype=atb.TW_TYPE_UINT32,
-            min=1,
-            max=100,
-            step=1,
-            target=sb_ff,
-            attr='pupil_min_radius',
-            )
+            self.sb_ff_bar.add_var(
+                'Pupil/pupil_min_radius',
+                label='min radius',
+                vtype=atb.TW_TYPE_UINT32,
+                min=1,
+                max=100,
+                step=1,
+                target=sb_ff,
+                attr='pupil_min_radius',
+                )
 
-        self.sb_ff_bar.add_var(
-            'Pupil/pupil_threshold',
-            label='edge detect threshold',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=0.1,
-            max=5.0,
-            step=0.1,
-            target=sb_ff,
-            attr='pupil_threshold',
-            )
+            self.sb_ff_bar.add_var(
+                'Pupil/pupil_threshold',
+                label='edge detect threshold',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=0.1,
+                max=5.0,
+                step=0.1,
+                target=sb_ff,
+                attr='pupil_threshold',
+                )
 
-        self.sb_ff_bar.add_var(
-            'CR/n_cr_rays',
-            label='n rays',
-            vtype=atb.TW_TYPE_UINT32,
-            min=1,
-            max=100,
-            step=1,
-            target=sb_ff,
-            attr='cr_n_rays',
-            )
+            self.sb_ff_bar.add_var(
+                'CR/n_cr_rays',
+                label='n rays',
+                vtype=atb.TW_TYPE_UINT32,
+                min=1,
+                max=100,
+                step=1,
+                target=sb_ff,
+                attr='cr_n_rays',
+                )
 
-        self.sb_ff_bar.add_var(
-            'CR/cr_min_radius',
-            label='min radius',
-            vtype=atb.TW_TYPE_UINT32,
-            min=1,
-            max=100,
-            step=1,
-            target=sb_ff,
-            attr='cr_min_radius',
-            )
+            self.sb_ff_bar.add_var(
+                'CR/cr_min_radius',
+                label='min radius',
+                vtype=atb.TW_TYPE_UINT32,
+                min=1,
+                max=100,
+                step=1,
+                target=sb_ff,
+                attr='cr_min_radius',
+                )
 
-        self.sb_ff_bar.add_var(
-            'CR/cr_threshold',
-            label='edge detect threshold',
-            vtype=atb.TW_TYPE_FLOAT,
-            min=0.1,
-            max=5.0,
-            step=0.1,
-            target=sb_ff,
-            attr='cr_threshold',
-            )
+            self.sb_ff_bar.add_var(
+                'CR/cr_threshold',
+                label='edge detect threshold',
+                vtype=atb.TW_TYPE_FLOAT,
+                min=0.1,
+                max=5.0,
+                step=0.1,
+                target=sb_ff,
+                attr='cr_threshold',
+                )
 
-        fit_algos = {0: 'circle_least_squares',
-                     1: 'circle_least_squares_ransac',
-                     2: 'ellipse_least_squares'}
+            fit_algos = {0: 'circle_least_squares',
+                         1: 'circle_least_squares_ransac',
+                         2: 'ellipse_least_squares'}
 
-        fit_algos_rev = dict([(val, key) for (key, val) in fit_algos.items()])
+            fit_algos_rev = dict([(val, key) for (key, val) in fit_algos.items()])
 
-        FittingAlgorithm = atb.enum('FittingAlgorithm', {'circle lst sq': 0,
-                                    'circle ransac': 1, 'ellipse lst sq': 2})
-        self.sb_ff_bar.add_var('Fitting/circle_fit', label='circle fit method',
-                               vtype=FittingAlgorithm, getter=lambda: \
-                               fit_algos_rev[sb_ff.fitting_algorithm],
-                               setter=lambda x: \
-                               setattr(sb_ff, 'fitting_algorithm', fit_algos[x]))
+            FittingAlgorithm = atb.enum('FittingAlgorithm', {'circle lst sq': 0,
+                                        'circle ransac': 1, 'ellipse lst sq': 2})
+            self.sb_ff_bar.add_var('Fitting/circle_fit', label='circle fit method',
+                                   vtype=FittingAlgorithm, getter=lambda: \
+                                   fit_algos_rev[sb_ff.fitting_algorithm],
+                                   setter=lambda x: \
+                                   setattr(sb_ff, 'fitting_algorithm', fit_algos[x]))
 
-        self.sb_ff_bar.add_var('Display/show_rays', self.display_starburst)
+            self.sb_ff_bar.add_var('Display/show_rays', self.display_starburst)
 
 
 

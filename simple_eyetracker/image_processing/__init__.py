@@ -11,3 +11,4 @@ from ImageSaveDummyFeatureFinder import *
 from SubpixelStarburstEyeFeatureFinder import *
 from CLSubpixelStarburstEyeFeatureFinder import *
 from DummyFeatureFinder import *
+from QueueingFeatureFinder import *

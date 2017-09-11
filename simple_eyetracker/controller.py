@@ -12,7 +12,8 @@ from simple_eyetracker.image_processing import (SubpixelStarburstEyeFeatureFinde
                                                 CLSubpixelStarburstEyeFeatureFinder,
                                                 PipelinedFeatureFinder,
                                                 DummyEyeFeatureFinder,
-                                                OpenCLBackend)
+                                                OpenCLBackend,
+                                                QueueingFeatureFinder)
 
 class EyeTrackerController(object):
 
@@ -88,31 +89,42 @@ class EyeTrackerController(object):
         # a setting of "0" says to run everything in one process
         nworkers = settings.get('n_image_processing_workers', 0)
 
+        nworkers = 4
         # todo: choose a Backend here to use
 
         # Run image processing workers in multiple processes
         if nworkers != 0:
 
-            self.feature_finder = PipelinedFeatureFinder(nworkers)
-            workers = self.feature_finder.workers
+            # self.feature_finder = PipelinedFeatureFinder(nworkers)
+            # workers = self.feature_finder.workers
 
-            self.rffs = []
-            self.sbffs = []
-            for worker in workers:
+            # self.rffs = []
+            # self.sbffs = []
+            # for worker in workers:
 
-                fr_ff = worker.FastRadialFeatureFinder()  # in worker process
-                sb_ff = worker.StarBurstEyeFeatureFinder()  # in worker process
+            #     fr_ff = worker.FastRadialFeatureFinder()  # in worker process
+            #     sb_ff = worker.StarBurstEyeFeatureFinder()  # in worker process
 
-                self.rffs.append(fr_ff)
-                self.sbffs.append(sb_ff)
+            #     self.rffs.append(fr_ff)
+            #     self.sbffs.append(sb_ff)
 
-                comp_ff = worker.FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
+            #     comp_ff = worker.FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
 
-                worker.set_main_feature_finder(comp_ff)  # create in worker process
+            #     worker.set_main_feature_finder(comp_ff)  # create in worker process
 
-            # self.radial_ff = ParamExpose(self.rffs, rff_params)
-            # self.starburst_ff = ParamExpose(self.sbffs, sbff_params)
-            self.feature_finder.start()  # start the worker loops
+            # # self.radial_ff = ParamExpose(self.rffs, rff_params)
+            # # self.starburst_ff = ParamExpose(self.sbffs, sbff_params)
+            # self.feature_finder.start()  # start the worker loops
+            def make_composite_ff():
+                # run everything in one process
+                b = OpenCLBackend()
+                sb_ff = CLSubpixelStarburstEyeFeatureFinder(backend=b)
+                fr_ff = FastRadialFeatureFinder(backend=b)
+
+                # comp_ff = FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
+                return CompositeEyeFeatureFinder(fr_ff, sb_ff)
+
+            self.feature_finder = QueueingFeatureFinder(make_composite_ff, nworkers)
         else:
 
             # run everything in one process

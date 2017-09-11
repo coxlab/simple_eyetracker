@@ -8,9 +8,13 @@
 
 from multiprocessing.managers import SyncManager
 
-from FrugalCompositeEyeFeatureFinder import *
+from OpenCLBackend import OpenCLBackend
+from WovenBackend import WovenBackend
+
+from CompositeEyeFeatureFinder import *
 from FastRadialFeatureFinder import *
 from SubpixelStarburstEyeFeatureFinder import *
+from CLSubpixelStarburstEyeFeatureFinder import *
 
 import time
 import Queue
@@ -124,9 +128,9 @@ def worker_loop(ff, image_queue, output_queue, id=-1):
         output_queue.put(pickle.dumps(features))
 
 
-PipelinedWorkerProcessManager.register('FrugalCompositeEyeFeatureFinder', FrugalCompositeEyeFeatureFinder)
+PipelinedWorkerProcessManager.register('CompositeEyeFeatureFinder', CompositeEyeFeatureFinder)
 PipelinedWorkerProcessManager.register('FastRadialFeatureFinder', FastRadialFeatureFinder, exposed=('get_param', 'set_param'))
-PipelinedWorkerProcessManager.register('StarBurstEyeFeatureFinder', SubpixelStarburstEyeFeatureFinder, exposed=('get_param', 'set_param'))
+PipelinedWorkerProcessManager.register('StarBurstEyeFeatureFinder', CLSubpixelStarburstEyeFeatureFinder, exposed=('get_param', 'set_param'))
 PipelinedWorkerProcessManager.register('PipelinedWorker', PipelinedWorker)
 
 
