@@ -295,9 +295,15 @@ class LocalMemorySeparableCorrelation:
             print(e)
             exit()
 
-        self.program_cache[prog_parameters] = program
+        class ConvProxy:
+            def __init__(self, prog):
+                self.separable_convolution_col = prog.separable_convolution_col
+                self.separable_convolution_row = prog.separable_convolution_row
+        proxy = ConvProxy(program)
 
-        return program
+        self.program_cache[prog_parameters] = proxy
+
+        return proxy
 
     def __call__(self,
                  input_dev,

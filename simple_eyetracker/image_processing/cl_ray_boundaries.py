@@ -128,9 +128,15 @@ class FindRayBoundaries:
             print(e)
             exit()
 
-        self.program_cache[prog_params] = program
+        class ProgProxy:
+            def __init__(self, prog):
+                self.sample_rays = prog.sample_rays
+                self.scan_boundary = prog.scan_boundary
 
-        return program
+        proxy = ProgProxy(program)
+        self.program_cache[prog_params] = proxy
+
+        return proxy
 
     def __call__(self, im, nrays, nsamples, ray_step, seed_pt, cutoff, thresh):
 

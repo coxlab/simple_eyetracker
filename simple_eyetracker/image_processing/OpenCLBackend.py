@@ -198,6 +198,10 @@ class OpenCLBackend (WovenBackend):
 
         self.cl_find_ray_boundaries = FindRayBoundaries(self.ctx, self.q)
 
+        self.calcF = self.radial_prg.calcF
+        self.calcOM = self.radial_prg.calcOM
+
+
     def fast_radial_transform(self, im, radii, alpha, readback=False):
 
         if im.shape != self.cached_shape:
@@ -213,7 +217,7 @@ class OpenCLBackend (WovenBackend):
 
         for radius in radii:
             #print "------ Running -------"
-            self.radial_prg.calcOM(self.q, im.shape, None,
+            self.calcOM(self.q, im.shape, None,
                     self.clm.data, self.clx.data, self.cly.data,
                     self.clO.data, self.clM.data,
                     np.int32(radius))
@@ -223,7 +227,8 @@ class OpenCLBackend (WovenBackend):
             else:
                 kappa = 9.9
 
-            self.radial_prg.calcF(self.q, im.shape, None,
+
+            self.calcF(self.q, im.shape, None,
                            self.clO.data, self.clM.data, self.clF.data,
                            np.float32(kappa), np.float32(alpha))
 
@@ -295,7 +300,7 @@ def test_with_noise():
     im = np.random.randn(123, 164)
     print "testing inline"
     b = OpenCLBackend()
-    for i in range(0, 20):
+    for i in range(0, 2000):
         # r = test_inline(im)
         r = test_starburst(b, im)
     # print "Radial returned:", r.max(), r.min()

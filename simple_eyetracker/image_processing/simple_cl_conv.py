@@ -92,7 +92,14 @@ class NaiveSeparableCorrelation:
             }
         """
 
-        self.program = cl.Program(self.ctx, code).build()
+        program = cl.Program(self.ctx, code).build()
+
+        class ProgramProxy:
+            def __init__(self, prog):
+                self.separable_correlation_row = prog.separable_correlation_row
+                self.separable_correlation_col = prog.separable_correlation_col
+
+        self.program = ProgramProxy(program)
 
     def __call__(self,
                  input_buf,
