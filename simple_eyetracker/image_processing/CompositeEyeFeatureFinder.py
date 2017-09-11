@@ -38,7 +38,7 @@ class CompositeEyeFeatureFinder(EyeFeatureFinder):
         # self.ff_fast_radial.target_kpixels = 10 #50
         tic = time.time()
         self.ff_fast_radial.analyze_image(im, guess)  # NOTE: for now, the guess is not used by the fast radial feature finder
-        print('fast_radial: %f' % (time.time() - tic))
+        # print('fast_radial: %f' % (time.time() - tic))
         features = self.ff_fast_radial.get_result()
         
         
@@ -64,7 +64,7 @@ class CompositeEyeFeatureFinder(EyeFeatureFinder):
             tic = time.time()
             self.ff_starburst.analyze_image(im, features.copy())
             features = self.ff_starburst.get_result()
-            print('starburst: %f' % (time.time() - tic))
+            # print('starburst: %f' % (time.time() - tic))
         except Exception, e:
             features['pupil_radius'] = None
             features['cr_radius'] = None

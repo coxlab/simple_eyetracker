@@ -297,7 +297,7 @@ class OpenCLBackend (WovenBackend):
 
 
 def test_with_noise():
-    im = np.random.randn(123, 164)
+    im = np.random.randn(300, 400)
     print "testing inline"
     b = OpenCLBackend()
     for i in range(0, 2000):

@@ -109,12 +109,12 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
             logging.debug('Downsampling factor: %s' % self.ds_factor)
 
         ds = self.ds_factor
-        print("front tic: %f" % (time.time() - alltic))
+        # print("front tic: %f" % (time.time() - alltic))
 
         frtic = time.time()
         S = self.backend.fast_radial_transform(im_array, self.radiuses_to_try,
                 self.alpha)
-        print("self.backend.fast_radial_transform: %f" % (time.time() - frtic))
+        # print("self.backend.fast_radial_transform: %f" % (time.time() - frtic))
 
         # S[:, 0:self.restrict_left] = -1.
         # S[:, self.restrict_right:] = -1.
@@ -160,9 +160,9 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
         #     print "WTF!!!!!!"
 
         self.result = features
-        print("back tic: %f" % (time.time() - backtic))
+        # print("back tic: %f" % (time.time() - backtic))
 
-        print('all %f' % (time.time() - alltic))
+        # print('all %f' % (time.time() - alltic))
 
     def update_parameters(self):
         self.parameters_updated = 1

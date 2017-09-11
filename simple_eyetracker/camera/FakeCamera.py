@@ -21,11 +21,11 @@ def load_image(fn):
     ext = os.path.splitext(fn)[1].lower()
     if ext in ('.jpg', '.png'):
         im = Image.open(fn)
-        im_array = array(im).astype(double)
+        im_array = array(im).astype(float)
         if(im_array.ndim == 3):
             im_array = mean(im_array[:,:,:3], 2)
     elif ext == '.pkl':
-        im_array = pickle.load(open(fn)).astype(double)
+        im_array = pickle.load(open(fn)).astype(float)
     return im_array
 
 
@@ -58,7 +58,7 @@ class FakeCamera:
         else:
             self.im_array = None
         
-        self.wait = 0.5
+        self.wait = 0.0001
 
 
     def acquire_image(self):
