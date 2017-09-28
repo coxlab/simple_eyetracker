@@ -11,10 +11,21 @@ from simple_eyetracker.controller import EyeTrackerController
 from simple_eyetracker.gui import EyeTrackerGUI
 from simple_eyetracker.settings import settings
 
+from optparse import OptionParser
+
 fn = os.path.expanduser('~/.eyetracker/log.txt')
 logging.basicConfig(level=logging.DEBUG, filename=fn, filemode='w')
 
+
 if __name__ == '__main__':
+
+    parser = OptionParser()
+    parser.add_option('-v', '--video', dest='video_file', help='Video file path')
+    (options, args) = parser.parse_args()
+
+    if options.video_file is not None:
+        settings['use_video_for_camera'] = True
+        settings['video_file'] = options.video_file
 
     et = EyeTrackerController(settings)
     gui = EyeTrackerGUI(et)
