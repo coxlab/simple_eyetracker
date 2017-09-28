@@ -257,7 +257,7 @@ class EyeTrackerGUI:
         # ---------------------------------------------------------------------
         #   RADIAL FEATURE FINDER
         # ---------------------------------------------------------------------
-        if False:
+        if True:
             radial_ff = c.radial_ff
 
             self.radial_ff_bar = atb.Bar(
@@ -750,10 +750,10 @@ class EyeTrackerGUI:
         if self.show_feature_map:
             transform_im = features['transform']
             if transform_im is not None:
-                transform_im -= min(ravel(transform_im))
-                transform_im = transform_im * 255 / max(ravel(transform_im))
+                transform_im -= min(np.ravel(transform_im))
+                transform_im = transform_im * 255 / max(np.ravel(transform_im))
                 # ravelled = ravel(transform_im)
-                self.tracker_view.im_array = transform_im.astype(uint8)
+                self.tracker_view.im_array = transform_im.astype(np.uint8)
         else:
             self.tracker_view.im_array = features['im_array']
 

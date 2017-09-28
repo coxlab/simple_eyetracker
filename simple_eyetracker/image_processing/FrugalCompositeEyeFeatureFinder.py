@@ -28,8 +28,8 @@ class FrugalCompositeEyeFeatureFinder(EyeFeatureFinder):
 
         self.first_run = True
 
-        self.reseed_threshold = 400.0
-        self.minimum_frames_to_reseed = 50
+        self.reseed_threshold = 1000.0
+        self.minimum_frames_to_reseed = 50000
         self.reseed_count = self.minimum_frames_to_reseed
 
     def update_parameters(self):

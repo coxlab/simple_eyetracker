@@ -13,6 +13,7 @@ from simple_eyetracker.image_processing import (SubpixelStarburstEyeFeatureFinde
                                                 PipelinedFeatureFinder,
                                                 DummyEyeFeatureFinder,
                                                 OpenCLBackend,
+                                                WovenBackend,
                                                 QueueingFeatureFinder)
 
 class EyeTrackerController(object):
@@ -45,10 +46,11 @@ class EyeTrackerController(object):
 
         self.camera = None
 
+        use_video = settings.get('use_video_for_camera', False)
         use_image = settings.get('use_image_for_camera', False)
         use_povray = settings.get('use_simulated_camera', False)
 
-        if not use_image and not use_povray:
+        if not use_video and not use_image and not use_povray:
             # use the Basler camera
             try:
                 self.camera = BaslerCamera()
@@ -65,6 +67,10 @@ class EyeTrackerController(object):
             im_fn = settings.get('test_image', '/tmp/rat_eye.jpg')
             self.camera = FakeCamera(im_fn)
         
+        if use_video:
+            vid_fn = settings.get('video_file')
+            self.camera = FakeCamera(vid_fn)
+
 
 
         # -------------------------------------------------------------------
@@ -89,8 +95,6 @@ class EyeTrackerController(object):
         # a setting of "0" says to run everything in one process
         nworkers = settings.get('n_image_processing_workers', 0)
 
-        nworkers = 4
-        # todo: choose a Backend here to use
 
         # Run image processing workers in multiple processes
         if nworkers != 0:
@@ -128,12 +132,15 @@ class EyeTrackerController(object):
         else:
 
             # run everything in one process
+            print('Running single-threaded')
+            # b = WovenBackend()
             b = OpenCLBackend()
-            sb_ff = CLSubpixelStarburstEyeFeatureFinder(backend=b)
+            b2 = WovenBackend()
+            sb_ff = SubpixelStarburstEyeFeatureFinder(backend=b2)
             fr_ff = FastRadialFeatureFinder(backend=b)
 
-            # comp_ff = FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
-            comp_ff = CompositeEyeFeatureFinder(fr_ff, sb_ff)
+            comp_ff = FrugalCompositeEyeFeatureFinder(fr_ff, sb_ff)
+            #comp_ff = CompositeEyeFeatureFinder(fr_ff, sb_ff)
 
             self.radial_ff = fr_ff
             self.starburst_ff = sb_ff

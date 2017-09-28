@@ -116,11 +116,16 @@ class FastRadialFeatureFinder(EyeFeatureFinder):
                 self.alpha)
         # print("self.backend.fast_radial_transform: %f" % (time.time() - frtic))
 
-        # S[:, 0:self.restrict_left] = -1.
-        # S[:, self.restrict_right:] = -1.
-        # S[0:self.restrict_top, :] = -1.
-        # S[self.restrict_bottom:, :] = -1.
+
+        # ddc put back in
+        if False:
+            S[:, 0:self.restrict_left] = -1.
+            S[:, self.restrict_right:] = -1.
+            S[0:self.restrict_top, :] = -1.
+            S[self.restrict_bottom:, :] = -1.
+
         backtic = time.time()
+
 
         if self.albino_mode:
             (pupil_coords, cr_coords) = self.find_albino_features(S, im_array)

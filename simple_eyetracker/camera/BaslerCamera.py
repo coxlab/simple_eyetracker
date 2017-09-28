@@ -60,17 +60,32 @@ class BaslerCamera:
             raise Exception("Couldn't instantiate camera")
 
 
-        self.camera.properties['Width'] = 160
-        self.camera.properties['Height'] = 120
-        self.camera.properties['CenterX'] = True
-        self.camera.properties['CenterY'] = True
-        self.camera.properties['PixelFormat'] = 'Mono8'
-        self.camera.properties['AcquisitionFrameRate'] = 120.0
-        self.camera.properties['AcquisitionFrameRateEnable'] = True
+        # self.set_property('ExposureMode', 'Once')
 
+        self.set_property('Width', 400)
+        self.set_property('Height', 300)
+        self.set_property('CenterX', True)
+        self.set_property('CenterY', True)
+        self.set_property('PixelFormat', 'Mono8')
+        self.set_property('AcquisitionFrameRate', 30.0)
+        self.set_property('AcquisitionFrameRateEnable', True)
+
+        print self.get_property('AcquisitionFrameRate')
 
         self.generator = self.camera.grab_images(-1)
 
+
+    def set_property(self, name, value):
+        try:
+            self.camera.properties[name] = value
+        except Exception as e:
+            print("Couldn't set camera property (%s, %s): %s" % (name, value, e))
+
+    def get_property(self, name):
+        try:
+            return self.camera.properties[name]
+        except Exception as e:
+            print("Couldn't get camera property (%s): %s" % (name, e))
 
     def shutdown(self):
         print "Deleting camera (in python)"
